@@ -25,12 +25,12 @@ Uwaga: ARM Compiler 5 jest klasyfikowany jako produkt "Legacy", co oznacza, że 
      Po przejściu na stronę, może być konieczne zalogowanie się na konto ARM Developer.
   2. Zainstaluj W lokalizacji programu Arm Keil uVision5 w folderze ARM na przykład C:\programs\Keil_v5\ARM\
   3. W programie Arm Keil uVision5 wybierz Menage Project Items
-     3.1. Przejdź do zakładki Folders/Extensions
+     3.1. Przejdź do zakładki Folders/Extension
      3.2. Kliknij 3 kropki w polu Use ARM Compiler
      3.3. Kliknij Add another ARM Compiler  Versin to List... 
           i wybierz ścieżkę do folderu z zainstalowanym Compiler 5
      3.4. W polu Use ARM Compiler kliknij Setup Default ARM Compiler Version i wybiezrz zainstalowaną wersję 5.06 Update 7 (build 960) i zatwierdź OK
-
+     
 ## 4. Options for Target
      4.1. W zakładce Device upewnij się że jest wybrane odpowiednie urządzenie 
           STMicroelectronics → STM32L0 Series → STM32L072CZTx
