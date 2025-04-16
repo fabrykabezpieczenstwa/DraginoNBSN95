@@ -25,7 +25,7 @@ Uwaga: ARM Compiler 5 jest klasyfikowany jako produkt "Legacy", co oznacza, że 
      Po przejściu na stronę, może być konieczne zalogowanie się na konto ARM Developer.
   2. Zainstaluj w lokalizacji zainstalowanego programu Arm Keil uVision5 w folderze ARM na przykład C:\programs\Keil_v5\ARM\
   3. W programie Arm Keil uVision5 wybierz "Menage Project Items"
-<!-- TOC depthFrom:1 -->
+<!-- TOC depthFrom:2 -->
 3.1. Przejdź do zakładki "Folders/Extension"
 3.2. Kliknij 3 kropki "..." w polu "Use ARM Compiler"
 3.3. Kliknij "Add another ARM Compiler Versin to List..." 
@@ -45,8 +45,8 @@ Uwaga: ARM Compiler 5 jest klasyfikowany jako produkt "Legacy", co oznacza, że 
      Źródło wsparcia definiuje zarówno modele serii -CB, jak i -CS. Seria -CS pobiera próbkę napięcia z akumulatora, co różni się od serii -CB.
 <img width="480" alt="eb575b8259f1ed115c87e391dc8c438" src="https://github.com/dragino/NBSN95/assets/652246/48784b33-20f5-48ea-abcd-a5b7854687b2">
 <!-- TOC depthFrom:1 -->
-* Jeśli zdefiniowano NB_NS , kod źródłowy jest przeznaczony dla serii -CS.
-* Jeśli nie zdefiniowano parametru NB_NS, kod źródłowy jest przeznaczony dla serii -CB.
+- Jeśli zdefiniowano NB_NS , kod źródłowy jest przeznaczony dla serii -CS.
+- Jeśli nie zdefiniowano parametru NB_NS, kod źródłowy jest przeznaczony dla serii -CB.
   Czyli dla urządzenia seri CB należy usunąć ",NB_NS" w polu "Define".
 <!-- /TOC -->
    
