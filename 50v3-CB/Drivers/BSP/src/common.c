@@ -1,6 +1,7 @@
 #include "common.h"
 #include "nbInit.h"
 
+
 static uint8_t sys_pwd[10]={0};
 static char sensor_data[1400]={0};
 uint8_t detect_flags=0;
@@ -343,7 +344,8 @@ void BSP_sensor_Init( void  )
 }
 
 void txPayLoadDeal(SENSOR* Sensor)
-{	
+{
+printf("[PAYLOAD_COMMON] START txPayLoadDeal\r\n");	
 	if(ble_sleep_flags==1)
 	{
 		if((HAL_GPIO_ReadPin(DX_BT24_STATUS_PORT,DX_BT24_LINK_PIN)==1)||(HAL_GPIO_ReadPin(DX_BT24_STATUS_PORT,DX_BT24_WORK_PIN)==1))
@@ -551,16 +553,23 @@ void txPayLoadDeal(SENSOR* Sensor)
 		}
 		else
 		{
+		printf("[ADC] Wywolanie pomiaru adc\r\n");	
 		Sensor->adc2 = ADCModel(ADC_CHANNEL_1);
 		sprintf(Sensor->data+strlen(Sensor->data), "%.4x", Sensor->adc2);				
 		Sensor->temDs18b20_1 = DS18B20_GetTemp_SkipRom(1)*10;DS18B20_IoDeInit(1);	
 		sprintf(Sensor->data+strlen(Sensor->data), "%c", (Sensor->temDs18b20_1>=0)?'0':'F');
 		sprintf(Sensor->data+strlen(Sensor->data), "%.3x",(Sensor->temDs18b20_1>=0)?Sensor->temDs18b20_1:Sensor->temDs18b20_1*(-1));				
 		sprintf(Sensor->data+strlen(Sensor->data), "%.2x", Sensor->exit_state);
+		sensor.exit_level = HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_15); //dodatkowy odczyt poziomu na PB15 FABE
+		printf("[GPIO] Level PB15 = %d\r\n", sensor.exit_level);
 		sprintf(Sensor->data+strlen(Sensor->data), "%.2x", Sensor->exit_level);	
 		sprintf(Sensor->data+strlen(Sensor->data), "%.2x", Sensor->exit_state_pa4);
+		sensor.exit_level_pa4 = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4); //dodatkowy odczyt poziomu na PA4 FABE
+		printf("[GPIO] Level PA4 = %d\r\n", sensor.exit_level_pa4);
 		sprintf(Sensor->data+strlen(Sensor->data), "%.2x", Sensor->exit_level_pa4);		
 		sprintf(Sensor->data+strlen(Sensor->data), "%.2x", Sensor->exit_state_pa0);
+		sensor.exit_level_pa0 = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0); //dodatkowy odczyt poziomu na PA0 FABE
+		printf("[GPIO] Level PA0 = %d\r\n", sensor.exit_level_pa0);
 		sprintf(Sensor->data+strlen(Sensor->data), "%.2x", Sensor->exit_level_pa0);				
 		}
 	}
@@ -704,6 +713,7 @@ void txPayLoadDeal(SENSOR* Sensor)
 	
 void txPayLoadDeal2(SENSOR* Sensor)
 {	
+	printf("[PAYLOAD_COMMON] START txPayLoadDeal2\r\n");
 	user_main_printf("remaining battery =%d mv",Sensor->batteryLevel_mV);	
 	Sensor->batteryLevel_mV = getVoltage();
   get_sensorvalue();

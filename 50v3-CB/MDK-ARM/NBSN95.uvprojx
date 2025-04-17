@@ -10,14 +10,15 @@
       <TargetName>NBSN95</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
+      <pArmCC>5060960::V5.06 update 7 (build 960)::.\Compiler5</pArmCC>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\Compiler5</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32L072CZTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32L0xx_DFP.2.2.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32L0xx_DFP.3.0.0</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x802FFFF) CLOCK(8000000) CPUTYPE("Cortex-M0+")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -48,7 +49,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>NBSN95\</OutputDirectory>
+          <OutputDirectory>.\NBSN95\</OutputDirectory>
           <OutputName>SN50V3-NB-GE</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
@@ -82,7 +83,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>D:\Keil_v5\ARM\ARMCLANG\bin\fromelf.exe --bin --output=@L.bin !L</UserProg1Name>
+            <UserProg1Name>C:\Users\LG\AppData\Local\Keil_v5\ARM\ARMCLANG\bin\fromelf.exe --bin --output=@L.bin !L</UserProg1Name>
             <UserProg2Name>fromelf --bin -o "$L@L.bin" "#L"</UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -338,7 +339,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER, USE_STM32L0XX_NUCLEO,STM32L072xx,SHT3x,NB_NS</Define>
+              <Define>USE_HAL_DRIVER, USE_STM32L0XX_NUCLEO,STM32L072xx,SHT3x</Define>
               <Undefine></Undefine>
               <IncludePath>../Inc;               ../Drivers/STM32L0xx_HAL_Driver/Inc;               ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy;               ../Drivers/CMSIS/Device/ST/STM32L0xx/Include;               ../Drivers/CMSIS/Include;               ..\Drivers\BSP\inc;               ..\Drivers\LWM2M</IncludePath>
             </VariousControls>

@@ -337,6 +337,7 @@ NB_TaskStatus nb_MQTT_pub_run(const char* param)
 
 	if(nb_at_send(&NBTask[_AT_MQTT_PUBEX]) == NB_CMD_SUCC)
 	{
+		printf("[MQTT] Wysylka MQTT: %s\r\n", ATSendStr);
 		nb_cmd_status = NB_CMD_SUCC;
 	}
 	else

@@ -1002,7 +1002,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			sys.exit_flag = 1;
 			sensor.exit_level = HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_15);
 			sensor.exit_state = 1;
-			LPM_DisableStopMode();	
+			LPM_DisableStopMode();
+			printf("[EXTI] Przerwanie na PB15, level = %d\r\n", sensor.exit_level);
 			}
 		}
 	}
@@ -1021,7 +1022,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			sys.exit_flag_pa4 = 1;
 			sensor.exit_level_pa4 = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4);
 			sensor.exit_state_pa4 = 1;
-			LPM_DisableStopMode();	
+			LPM_DisableStopMode();
+			printf("[EXTI] Przerwanie na PA4, level = %d\r\n", sensor.exit_level_pa4);				
 			}
 		}
 	}
@@ -1040,7 +1042,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			sys.exit_flag_pa0 = 1;
 			sensor.exit_level_pa0 = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0);
 			sensor.exit_state_pa0 = 1;
-			LPM_DisableStopMode();	
+			LPM_DisableStopMode();
+			printf("[EXTI] Przerwanie na PA0, level = %d\r\n", sensor.exit_level_pa0);
 			}
 		}
 	}

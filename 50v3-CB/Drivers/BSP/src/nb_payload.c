@@ -11,6 +11,7 @@ extern uint16_t pro_data_num;
 extern int32_t Weight_Shiwu;
 void pro_data_thingspeak(void)
 {
+	printf("[PAYLOAD] START pro_data_thingspeak\r\n");
 	memset(buff,0,sizeof(buff));	
 	uint16_t batteryLevel_mV=getVoltage();
 	
@@ -95,11 +96,12 @@ void pro_data_thingspeak(void)
 	 sprintf(buff+strlen(buff), "field8=%.2f",tem_value);			
 	}
       pro_data_num=strlen(buff);
-	
+	printf("[PAYLOAD] %s\r\n", buff);
 }
 
 void pro_data(void)
 {
+	printf("[PAYLOAD] START pro_data\r\n");
 	memset(buff,0,sizeof(buff));
 		uint16_t batteryLevel_mV=getVoltage();
 		time_t curtime;
@@ -270,10 +272,12 @@ void pro_data(void)
 		}	
 			strcat(buff,(char*)"}");	
       pro_data_num=strlen(buff);
+printf("[PAYLOAD] %s\r\n", buff);			
 }
 
 void mode_data(char *buff)
 {
+		printf("[PAYLOAD] START mode_data\r\n");
 	if(sys.mod == model1)
 	{
   sprintf(buff+strlen(buff), "\"DS18B20_Temp\":%.1f,",ds1820_value);	
@@ -368,5 +372,7 @@ sprintf(buff+strlen(buff), "\"interrupt_level\":%d,",sensor.exit_level);
 	  sprintf(buff+strlen(buff), "\"interrupt\":%d,",sensor.exit_state);
 		sprintf(buff+strlen(buff), "\"interrupt_level\":%d,",sensor.exit_level);	
 	 sprintf(buff+strlen(buff), "\"temperature\":%.2f",tem_value);			
-	}		
+	}
+	printf("[PAYLOAD] %s\r\n", buff);
+	
 }
