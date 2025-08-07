@@ -41,7 +41,7 @@
  * @retval None
  */
 
-#define AT_VERSION_STRING 	"v1.1.4"
+#define AT_VERSION_STRING 	"v1.1.4 SN50v3-CB/S31-CB by FABE"
 #define product_id 					 0x04
 
 typedef enum
