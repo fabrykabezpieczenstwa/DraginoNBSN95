@@ -417,7 +417,7 @@ static const struct ATCommand_s ATCommand[] =
     .string = AT TTHR,
     .size_string = sizeof(TTHR) - 1,
 #ifndef NO_HELP
-    .help_string = AT TTHR "    : Temperature delta threshold in 0.1C (e.g. 10=1.0C)",
+    .help_string = AT TTHR "    : Temperature delta threshold in 0.1C (e.g. 10=1.0C - min=1, max=1000)",
 #endif
     .get = at_tthr_get,
     .set = at_tthr_set,
