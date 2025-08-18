@@ -522,6 +522,30 @@ ATEerror_t at_tdc_set(const char *param)
   return AT_OK;
 }
 
+/**************           AT+TTHR         **************/
+ATEerror_t at_tthr_get(const char *param)
+{
+    if(keep) printf("AT+TTHR=");
+    printf("%d\r\n", sys.temp_thr);   // jednostka: 0.1°C
+    return AT_OK;
+}
+
+ATEerror_t at_tthr_set(const char *param)
+{
+    char* pos = strchr(param,'=');
+    if(pos == NULL) return AT_PARAM_ERROR;
+
+    int val = atoi(param + (pos - param) + 1); // 0.1°C; np. 15 = 1.5°C
+    if(val < 1 || val > 1000) {                // bezpieczny zakres
+        return AT_PARAM_ERROR;
+    }
+    sys.temp_thr = (uint16_t)val;
+		config_Set();  // <<< ZAPISZ DO FLASH
+		
+    return AT_OK; // config_Set() zostanie wywolane w dispatcherze AT po AT_OK
+}
+
+
 /************** 			AT+INMOD		 **************/
 ATEerror_t at_inmod_get(const char *param)
 {
@@ -1315,6 +1339,7 @@ ATEerror_t at_gtdc_set(const char *param)
 /************** 			AT+GETLOG		**************/
 ATEerror_t at_getlog_run(const char *param)
 {
+	
 	DatalogPrint();
 	return AT_OK;
 }
@@ -1513,6 +1538,7 @@ void config_Set(void)
 	general_parameters[29]=sys.clock_switch<<24 | sys.strat_time<<8 |sys.log_seq;	
 	general_parameters[30]=gnss_timer<<16 | gps_flag<<8 |ipv46;		
 	general_parameters[31]=sensor.exit_count_pa0;
+  general_parameters[15] = sys.temp_thr;   // offset add+60 FABE
 	general_parameters[13]=sys.ddns_flag<<24 |sys.ddns_time<<16|sys.downlink_1t<<8|sys.downlink_debug;
 	for(uint8_t i=0,j=0;i<strlen((char*)user.deui);i=i+4,j++)
 			general_parameters[7+j]=user.deui[i+0]<<24 | user.deui[i+1]<<16 | user.deui[i+2]<<8 | user.deui[i+3];
@@ -1700,6 +1726,10 @@ void config_Get(void)
 	sys.clock_switch = FLASH_read(add+116)>>24 &0xFF;
 	
 	sys.strat_time = FLASH_read(add+116)>>8 &0xFFFF;
+
+	sys.temp_thr = FLASH_read(add+60) & 0xFFFF;	// FABE
+	if(sys.temp_thr == 0) sys.temp_thr = 10000; // domyslnie duza róznica zeby niw wywolywac nieumyslnie
+	
   ipv46 = FLASH_read(add+120) &0xFF;
 	if(ipv46 == 0)
 		ipv46 = 1;
@@ -1720,6 +1750,9 @@ void config_Get(void)
 	
   sys.ddns_flag	= FLASH_read(add+52)>>24 &0xFF;		
 	add = add+28;
+
+
+	
 	for(uint8_t i=0,j=0;i<4;i++,j=j+4)
 	{
 		uint32_t temp  = FLASH_read(add+i*4);

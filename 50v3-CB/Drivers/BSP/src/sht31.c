@@ -1,4 +1,6 @@
 #include "sht31.h"
+#include <stdlib.h>
+
 float hum_value;
 float tem_value;
 extern uint16_t tem_store,hum_store;
@@ -34,6 +36,7 @@ void sht31Data(void)
   uint8_t times = 0;	
 	float hum=0.0;
 	float tem=0.0;
+	uint16_t tem_sent=0;
 	uint8_t rxdata[6]={0};
 	uint8_t SHT3X_Start_Buffer[2]={0xE0,0x00};
 	uint16_t AD_code = 0;
@@ -115,6 +118,9 @@ void sht31Data(void)
 	{
   user_main_printf("Humidity =%.2f %%rh",hum);
 	user_main_printf("tem =%.2f C",tem);	
+	//last_tdc_temp = (int)(tem*10);
+	//printf("[CLOCKLOG] przypisanie last_tdc_temp w sht31"); 
+	
 	}
   hum_value=hum;
   tem_value=tem;
@@ -122,8 +128,11 @@ void sht31Data(void)
 	sensor.humSHT = (int)(hum*10);
  		if(tdc_clock_log_flag==1)
 	{
+	printf("[CLOCKLOG] odczyt czujnika sht31 w cyklu CLOCKLOG\r\n");
 	hum_store=(int)(hum*10);
 	tem_store=(int)(tem*10);
-	}
+	user_main_printf("Humidity CLOCKLOG =%.2f %%rh",hum);
+	user_main_printf("Temp CLOCKLOG =%.2f C",tem);
+		}
 	sht31LowPower();
 }

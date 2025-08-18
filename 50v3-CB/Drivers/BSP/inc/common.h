@@ -41,7 +41,7 @@
  * @retval None
  */
 
-#define AT_VERSION_STRING 	"v1.1.4 SN50v3-CB/S31-CB by FABE"
+#define AT_VERSION_STRING 	"v1.1.4FABE"
 #define product_id 					 0x04
 
 typedef enum
@@ -100,7 +100,8 @@ typedef struct
 	uint8_t			downlink_1t;
 	uint8_t			downlink_debug;
 	uint8_t			join_interval;
-	uint8_t			join_time;	
+	uint8_t			join_time;
+	uint16_t temp_thr;   // próg róznicy temperatury (w dziesiatych °C); np. 10 = 1.0°C FABE
 }SYSTEM;
 
 typedef struct
@@ -166,6 +167,8 @@ typedef struct
 extern SYSTEM sys;
 extern SENSOR sensor;
 extern USER user;
+extern int last_tdc_temp; // temperatura z ostatniego uplinku TDC (w dziesiatych °C) FABE
+void trigger_immediate_uplink(void); //funkcja bybudzajaca urzadzenie po rzekroczeniu róznicy temperatur od ostatniej wysylki FABE
 
 void product_information_print(void);
 void reboot_information_print(void);

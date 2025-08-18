@@ -67,6 +67,7 @@
 #define ID2                 0x1FF80054
 #define ID3                 0x1FF80064
 
+
 uint8_t  rxbuf = 0;				
 static uint16_t rxlen = 0;
 static uint8_t  rxDATA[300]={0};
@@ -136,6 +137,10 @@ TimerEvent_t CalibrationtimeTimer;
 TimerEvent_t GNSSTimer;
 TimerEvent_t GNSS_tdc_Timer;
 
+/* USER CODE FABE */
+int last_tdc_temp = 0;
+extern TimerEvent_t TxTimer;
+
 void OnTxTimerEvent( void );
 void OnCheckBLETimesEvent(void);
 void GPIO_BLE_STATUS_Ioinit(void);
@@ -159,6 +164,7 @@ void HW_GetUniqueId( uint8_t *id );
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 
 /* USER CODE END 0 */
 
@@ -306,7 +312,7 @@ int main(void)
 	  gnss_send_flag=0;
 		task_num = _ATE;
 		nb.uplink_flag = send;
-	  gnss_tdc_flag=1;
+	  gnss_tdc_flag=1; 
 	}
 			if(is_time_to_send==1 && nb.uplink_flag == no_status && sleep_status==0)
 	{
@@ -507,7 +513,7 @@ static void USERTASK(void)
 		memset(nb.usart.data,0,NB_RX_SIZE);
 	}
 
-	if(tdc_clock_log_flag==1 && sys.clock_switch==1 && nb.uplink_flag !=send&& nb.uplink_flag !=running && sleep_status==0)
+	if(tdc_clock_log_flag==1 && sys.clock_switch==1 && nb.uplink_flag !=send&& nb.uplink_flag !=running && sleep_status==0) // Konczenie pojedynczego cyklu CLOCKLOG
 	{
     get_sensorvalue();
 		SysTime_t sysTimeCurrent = { 0 };
@@ -516,6 +522,14 @@ static void USERTASK(void)
 		memset((char*)nb.usart.data,0,sizeof(nb.usart.data));	
 		shtDataWrite();
 		tdc_clock_log_flag=0;
+		if (abs(last_tdc_temp-sensor.temSHT)>sys.temp_thr) // Sprawdzanie czy aktualnie zmierzona temperatura w cyklu CLOCKLOG rózni sie od ostatnio wyslanej temperatury o wiecej niz 'temp_thr' //FABE
+				{
+					printf("[CLOCKLOG] wykrycie róznicy temp - wymuszenie wysylki \r\n");
+					printf("[CLOCKLOG] ostatnio wyslana temperatura %d\r\n", last_tdc_temp);
+					printf("[CLOCKLOG] aktualna temperatura %d\r\n", sensor.temSHT);
+					printf("[CLOCKLOG] próg róznicy temperatur %d\r\n", sys.temp_thr);
+					trigger_immediate_uplink(); // wymuszenie wybudzenia i wysylki
+				}
 	}
 	if(/*nb.recieve_flag == NB_RECIEVE &&*/ nb.dns_flag == running )
 	{
@@ -1069,6 +1083,7 @@ void compare_time(uint16_t time)
 		time_temp=sys.strat_time+3600-time;
 	}
 	
+	
 	if(sys.strat_time==65535)
 	{
 		TimerSetValue( &timesampleTimer,  sys.tr_time*60000); 
@@ -1079,6 +1094,12 @@ void compare_time(uint16_t time)
 		TimerSetValue( &timesampleTimer,  time_temp*1000); 
 		TimerStart( &timesampleTimer);
 	}		
+}
+void trigger_immediate_uplink(void)
+{
+    TimerStop(&TxTimer);
+    TimerSetValue(&TxTimer, 1); // 1 ms, wyzwala OnTxTimerEvent() prawie natychmiast
+    TimerStart(&TxTimer);
 }
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {

@@ -2313,6 +2313,8 @@ case _AT_UPLOAD_SUCC:
 			*task = _AT_UPLOAD_END;
 			user_main_printf("Send complete");
 				sprintf(record_log+strlen(record_log), "Send complete\r\n");
+			last_tdc_temp =sensor.temSHT;																		//FABE
+			printf("[CLOCKLOG] przypisanie last_tdc_temp po wysylce w nbint\r\n");					//FABE
 			break;
 
 case _AT_UPLOAD_FAIL:
@@ -2401,13 +2403,22 @@ default:
 
 void stored_datalog(void)
 {
+	
+	printf("[CLOCKLOG] Funkcja stored_datalog() — rozpoczecie zbieranie danych.\n");//FABE
+	
+	// Przygotowanie danych do zapisu
+	
 	uint32_t parameters_log[128]={0};
 	for(uint16_t i=0,j=0;i<strlen((char*)record_log);i=i+4,j++)
 		 parameters_log[j]=record_log[i+0]<<24 | record_log[i+1]<<16 | record_log[i+2]<<8 | record_log[i+3];
 		 FLASH_erase(FLASH_USER_START_DATALOG+sys.log_seq * FLASH_PAGE_SIZE*4,((FLASH_USER_START_DATALOG+(sys.log_seq+1) * FLASH_PAGE_SIZE*4	) - (FLASH_USER_START_DATALOG+sys.log_seq * FLASH_PAGE_SIZE*4	)) / FLASH_PAGE_SIZE);
 	   FLASH_program(FLASH_USER_START_DATALOG+sys.log_seq * FLASH_PAGE_SIZE*4,parameters_log, sizeof(parameters_log)/4);	
-     sys.log_seq++;
+     
+	
+	// Debug: zakonczenie zapisu i obsluga indeksu logów
+	
+	sys.log_seq++;
      if(sys.log_seq==20)
         sys.log_seq=0;
-		config_Set();
-}					
+				config_Set();
+		 }					

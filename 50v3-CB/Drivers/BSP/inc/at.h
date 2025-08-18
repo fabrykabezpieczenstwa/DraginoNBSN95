@@ -71,6 +71,9 @@
 #define QBAND    "+QBAND"
 #define IOTMOD    "+IOTMOD"
 #define DOWNTE     "+DOWNTE"
+
+// FABE
+#define TTHR       "+TTHR"
 /**********************************************/
 
 typedef enum
@@ -123,6 +126,10 @@ ATEerror_t at_subtopic_get(const char *param);
 ATEerror_t at_subtopic_set(const char *param);
 ATEerror_t at_tdc_get(const char *param);
 ATEerror_t at_tdc_set(const char *param);
+
+ATEerror_t at_tthr_get(const char *param); //FABE
+ATEerror_t at_tthr_set(const char *param); //FABE
+
 ATEerror_t at_inmod_set(const char *param);
 ATEerror_t at_inmod_get(const char *param);
 ATEerror_t at_5vt_set(const char *param);
@@ -405,6 +412,18 @@ static const struct ATCommand_s ATCommand[] =
     .set = at_tdc_set,
     .run = at_return_error,
   },
+	  /** AT+TTHR **/						//FABE
+  {
+    .string = AT TTHR,
+    .size_string = sizeof(TTHR) - 1,
+#ifndef NO_HELP
+    .help_string = AT TTHR "    : Temperature delta threshold in 0.1C (e.g. 10=1.0C)",
+#endif
+    .get = at_tthr_get,
+    .set = at_tthr_set,
+    .run = at_return_error,
+  },
+
 		/** AT+INTMOD **/	
 	{
     .string = AT INTMOD,
