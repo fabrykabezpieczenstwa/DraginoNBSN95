@@ -1,6 +1,8 @@
 #include "at.h"
 #include "nbInit.h"
 #include "tiny_sscanf.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 static uint8_t  keep = 0;
 static uint32_t general_parameters[32]={0};
@@ -33,6 +35,11 @@ uint16_t gnss_timer=0;
 extern bool at_sleep_flag;
 extern bool sleep_status;
 extern bool first_sample;
+// FABE
+extern uint8_t  auto_restart_en;      // 0/1
+extern uint32_t auto_restart_hours;   // w godzinach [h]
+
+
 ATEerror_t ATInsPro(char* atdata)
 {
 	uint8_t i = 0;
@@ -519,6 +526,15 @@ ATEerror_t at_tdc_set(const char *param)
 		return AT_PARAM_ERROR;
 	}
 	sys.tdc = tdc;
+	
+	if (sys.autorestart_en) {
+    uint32_t min_hours = (sys.tdc *2u+3599u) / 3600u;
+    if (sys.autorestart_hours < min_hours) {
+        sys.autorestart_hours = min_hours;
+        auto_restart_hours    = min_hours;  // RAM tez podbij, zeby logika byla spójna
+        config_Set();
+    }
+	}
   return AT_OK;
 }
 
@@ -1460,6 +1476,70 @@ ATEerror_t at_down1t_set(const char *param)
 	sys.downlink_debug =tem2;	
   return AT_OK;
 }
+
+/* AT+AUTORESTART?  ->  +AUTORESTART:<a>,<b> */
+ATEerror_t at_autorestart_get(const char *param)
+{
+    (void)param;
+    printf("+AUTORESTART:%u,%lu\r\n", 
+		(unsigned)auto_restart_en, 
+		(unsigned long)auto_restart_hours);
+    return AT_OK;
+}
+
+/* AT+AUTORESTART=a,b  (a=0/1, b=hours) */
+/* Warunki:
+   - a musi byc 0 lub 1
+   - gdy a==1: b >= ceil(sys.tdc / 3600)
+*/
+ATEerror_t at_autorestart_set(const char *param)
+{
+    if (param == NULL) {
+        return AT_PARAM_ERROR;
+    }
+
+    // Znajdz '=' i parsuj to, co PO nim (a,b)
+    const char *pos = strchr(param, '=');
+    if (!pos || !*(pos + 1)) {
+        return AT_PARAM_ERROR;
+    }
+
+    unsigned a;
+    unsigned long b;
+    // uzyj tiny_sscanf (masz juz w projekcie) lub sscanf
+    if (tiny_sscanf(pos + 1, "%u,%lu", &a, &b) != 2) {
+        return AT_PARAM_ERROR;
+    }
+
+    if (a > 1u) {
+        return AT_PARAM_ERROR;
+    }
+
+    if (a == 0u) {
+        // Wylaczamy funkcje – b ignorujemy
+        auto_restart_en = 0u;
+				sys.autorestart_en = 0u;
+        return AT_OK;
+    }
+
+    // a == 1 (wlaczane) – sprawdzamy minimalne b
+    // min_hours = ceil(TDC *2 / 3600)
+    uint32_t tdc_sec = sys.tdc; 
+    uint32_t min_hours = (tdc_sec*2u+3599u)/3600u;
+    if (b < (unsigned long)min_hours) {
+        // Zwróc blad parametru – za mala wartosc
+        return AT_PARAM_ERROR;
+    }
+
+    auto_restart_en = a;
+    auto_restart_hours = (uint32_t)b;
+		sys.autorestart_en    = auto_restart_en;
+    sys.autorestart_hours = auto_restart_hours;
+		printf("Attention:Take effect after ATZ\r\n");
+		
+		config_Set();  // <<< ZAPISZ DO FLASH
+    return AT_OK;
+}
 /************** 		Other		 **************/
 char *rtrim(char* str)
 {
@@ -1514,6 +1594,10 @@ void config_Set(void)
 	general_parameters[30]=gnss_timer<<16 | gps_flag<<8 |ipv46;		
 	general_parameters[31]=sensor.exit_count_pa0;
 	general_parameters[13]=sys.ddns_flag<<24 |sys.ddns_time<<16|sys.downlink_1t<<8|sys.downlink_debug;
+	// --- AUTORESTART ---
+	general_parameters[14] = ( (uint32_t)(sys.autorestart_en & 0xFF) << 24 )
+                      | ( (uint32_t)(sys.autorestart_hours & 0x00FFFFFF) );
+
 	for(uint8_t i=0,j=0;i<strlen((char*)user.deui);i=i+4,j++)
 			general_parameters[7+j]=user.deui[i+0]<<24 | user.deui[i+1]<<16 | user.deui[i+2]<<8 | user.deui[i+3];
 	
@@ -1994,5 +2078,24 @@ void config_Get(void)
 	if(strlen((char*)user.qband) == 0)
 	{
 		sprintf((char*)user.qband, "%s", "0x100002000000000f0e189f,0x10004200000000090e189f");
-	}	
+	}
+
+// --- AUTORESTART ---
+		uint32_t word = FLASH_read(FLASH_USER_START_ADDR_CONFIG + 4u*14u);
+    sys.autorestart_en    = (uint8_t)((word >> 24) & 0xFF);
+    sys.autorestart_hours = (uint32_t)(word & 0x00FFFFFF);
+
+// Bezpieczne domyslne / sanity:
+if (sys.autorestart_en > 1)      sys.autorestart_en = 0;
+if (sys.autorestart_hours == 0)  sys.autorestart_hours = 720;  // min 30 days
+
+// Wymus: b (hours) >= ceil(TDC/3600)
+{
+    uint32_t min_hours = (sys.tdc *2u+3599u) / 3600u;
+    if (sys.autorestart_hours < min_hours) {
+        sys.autorestart_hours = min_hours;
+        
+    }
+}
+	
 }

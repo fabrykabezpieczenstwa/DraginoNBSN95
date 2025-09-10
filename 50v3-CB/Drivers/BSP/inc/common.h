@@ -100,7 +100,9 @@ typedef struct
 	uint8_t			downlink_1t;
 	uint8_t			downlink_debug;
 	uint8_t			join_interval;
-	uint8_t			join_time;	
+	uint8_t			join_time;
+	uint8_t  autorestart_en;     // 0=OFF, 1=ON FABE
+  uint32_t autorestart_hours;  // próg w godzinach FABE	
 }SYSTEM;
 
 typedef struct

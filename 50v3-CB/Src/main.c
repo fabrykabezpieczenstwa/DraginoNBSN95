@@ -67,6 +67,10 @@
 #define ID2                 0x1FF80054
 #define ID3                 0x1FF80064
 
+
+
+
+
 uint8_t  rxbuf = 0;				
 static uint16_t rxlen = 0;
 static uint8_t  rxDATA[300]={0};
@@ -125,6 +129,15 @@ bool sleep_status=0;//AT+SLEEP
 bool tdc_clock_log_flag=0;
 bool Calibrat_flag=0;
 bool gpstime_flag=0;
+/* FABE*/
+#include <stdint.h>
+volatile uint8_t g_tdc_cycle_flag = 0; // Flaga wybudzenia po TDC 1 = biezacy cykl pochodzi z TDC (TxTimer)
+/* Konfiguracja ustawiana AT+AUTORESTART */
+uint8_t  auto_restart_en = 0;         // 0=OFF, 1=ON 
+uint32_t auto_restart_hours;     // próg w godzinach h
+static uint64_t tdc_accum_sec64 = 0; /* Licznik sekund: 64-bit, zeby nie przepelnic przy bardzo dlugich okresach */
+static void TdcResetCounter_OnTdcCycle(void);
+
 /* USER CODE END PV */
 TimerEvent_t TxTimer;
 TimerEvent_t CheckBLETimesTimer;
@@ -199,11 +212,14 @@ int main(void)
 	HW_GetUniqueId(MCU_ID);
   HW_RTC_Init( );
 	HW_RTC_SetTimerContext();
+	
   MX_ADC_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 	new_firmware_update();
 	config_Get();
+	auto_restart_en    = sys.autorestart_en;
+	auto_restart_hours = sys.autorestart_hours;
 	GPIO_BLE_STATUS_Ioinit();
 	rename_ble();
   LoraStartCheckBLE();	
@@ -381,6 +397,10 @@ int main(void)
 #ifdef lowpower_enter
 		if(task_num == _AT_IDLE && uart2_recieve_flag==0)
 		{
+			if (g_tdc_cycle_flag && auto_restart_en) 
+					{          
+            TdcResetCounter_OnTdcCycle(); // Funkcja cyklicznego autorestartu
+          }
 			LPM_EnterStopMode(SystemClock_Config);
 		}
 #endif
@@ -811,6 +831,8 @@ void OnTxTimerEvent( void )
   TimerSetValue(&TxTimer,sys.tdc*1000); 
   TimerStart( &TxTimer);		
 	is_time_to_send=1;
+	g_tdc_cycle_flag = 1;  // to wybudzenie/cykl z TDC FABE
+
 }
 
 void GNSSTimerEvent( void )
@@ -1080,6 +1102,41 @@ void compare_time(uint16_t time)
 		TimerStart( &timesampleTimer);
 	}		
 }
+
+//FABE
+// Cykliczny AUTORESTART - Zliczanie TYLKO po cyklu TDC (flaga) + próg w godzinach (AT+AUTORESTART: b)
+static void TdcResetCounter_OnTdcCycle(void)
+{
+    printf("[AUTORESTART] zliczanie czasu \r\n"); //  log
+		if (g_tdc_cycle_flag == 0 || auto_restart_en == 0)
+		{
+        return; // bezpiecznik - przypadkowe wejscie
+    }
+				
+		g_tdc_cycle_flag = 0; // zerowanie flagi
+
+    // Sumowanie czasu TDC (sys.tdc w sekundach)
+    tdc_accum_sec64 += (uint64_t)sys.tdc;
+
+    // Próg w sekundach = hours * 3600 (64-bit)
+    const uint64_t threshold_sec = ((uint64_t)auto_restart_hours) * 3600ull;
+
+    if (threshold_sec == 0ull) {
+        // Teoretycznie nie powinno sie zdarzyc (bo wymuszamy min. b), ale na wszelki wypadek
+        return;
+    }
+
+    if (tdc_accum_sec64 >= threshold_sec) {
+        
+        printf("[AUTORESTART] threshold=%lu h, acc=%llu s -> reset\r\n", //  log
+               (unsigned long)auto_restart_hours,
+               (unsigned long long)tdc_accum_sec64);
+
+        tdc_accum_sec64 = 0ull;   // wyzeruj akumulator
+        NVIC_SystemReset();       // miekki reset MCU
+    }
+}
+
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 //	if(huart == (&hlpuart1))
@@ -1199,5 +1256,8 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
+
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
