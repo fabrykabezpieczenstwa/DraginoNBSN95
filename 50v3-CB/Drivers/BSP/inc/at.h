@@ -71,6 +71,7 @@
 #define QBAND    "+QBAND"
 #define IOTMOD    "+IOTMOD"
 #define DOWNTE     "+DOWNTE"
+#define AT_AUTORESTART      "+AUTORESTART"
 
 // FABE
 #define TTHR       "+TTHR"
@@ -227,6 +228,12 @@ ATEerror_t at_iotmod_set(const char *param);
 ATEerror_t at_iotmod_get(const char *param);
 ATEerror_t at_down1t_set(const char *param);
 ATEerror_t at_down1t_get(const char *param);
+
+/* AUTORESTART handlers */ 		//FABE
+ATEerror_t at_autorestart_get(const char *param);
+ATEerror_t at_autorestart_set(const char *param);
+
+
 /*Other*/
 char *rtrim(char *str);
 uint8_t hexDetection(char* str);
@@ -789,7 +796,20 @@ static const struct ATCommand_s ATCommand[] =
     .get = at_down1t_get,
     .set = at_down1t_set,
     .run = at_return_error,
-	},	
+	},
+	
+{
+  .string = AT_AUTORESTART,
+  .size_string = sizeof(AT_AUTORESTART) - 1,
+#ifndef NO_HELP
+  .help_string = AT_AUTORESTART ": Auto-restart (a,b): a=0/1, b=hours (>= ceil(TDC/3600))",
+#endif
+  .get = at_autorestart_get,
+  .set = at_autorestart_set,
+  .run = at_return_error,
+},
+
+	
 };
 
 ATEerror_t ATInsPro( char* at);

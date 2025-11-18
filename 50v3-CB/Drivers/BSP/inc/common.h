@@ -101,7 +101,10 @@ typedef struct
 	uint8_t			downlink_debug;
 	uint8_t			join_interval;
 	uint8_t			join_time;
-	uint16_t temp_thr;   // próg róznicy temperatury (w dziesiatych °C); np. 10 = 1.0°C FABE
+	uint8_t  autorestart_en;     // 0=OFF, 1=ON FABE
+  uint32_t autorestart_hours;  // prï¿½g w godzinach FABE	
+	uint8_t			join_time;
+	uint16_t temp_thr;   // prï¿½g rï¿½znicy temperatury (w dziesiatych ï¿½C); np. 10 = 1.0ï¿½C FABE
 }SYSTEM;
 
 typedef struct
@@ -167,8 +170,8 @@ typedef struct
 extern SYSTEM sys;
 extern SENSOR sensor;
 extern USER user;
-extern int last_tdc_temp; // temperatura z ostatniego uplinku TDC (w dziesiatych °C) FABE
-void trigger_immediate_uplink(void); //funkcja bybudzajaca urzadzenie po rzekroczeniu róznicy temperatur od ostatniej wysylki FABE
+extern int last_tdc_temp; // temperatura z ostatniego uplinku TDC (w dziesiatych ï¿½C) FABE
+void trigger_immediate_uplink(void); //funkcja bybudzajaca urzadzenie po rzekroczeniu rï¿½znicy temperatur od ostatniej wysylki FABE
 
 void product_information_print(void);
 void reboot_information_print(void);

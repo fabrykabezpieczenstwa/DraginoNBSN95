@@ -96,6 +96,7 @@ void EX_GPIO_Init(uint8_t state)
 	
 	if(state == 0)
 	{
+		printf("[GPIO] Konfiguracja PB15  state=0\r\n");
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		__HAL_RCC_GPIOB_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_15;
@@ -110,11 +111,12 @@ void EX_GPIO_Init(uint8_t state)
 	}
 	else if(state == 1)
 	{
+		printf("[GPIO] Konfiguracja PB15  state=1\r\n");
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		__HAL_RCC_GPIOB_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_15;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);	
 	}
 	else if(state == 2)
@@ -123,7 +125,7 @@ void EX_GPIO_Init(uint8_t state)
 		__HAL_RCC_GPIOB_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_15;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);	
 	}
 	else if(state == 3)
@@ -132,7 +134,7 @@ void EX_GPIO_Init(uint8_t state)
 		__HAL_RCC_GPIOB_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_15;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 	}
 	
@@ -149,6 +151,7 @@ void EX_GPIO_Init_pa4(uint8_t state)
 	
 	if(state == 0)
 	{
+		printf("[GPIO] Konfiguracja PA4  state=0\r\n");
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_4;
 		GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -157,10 +160,11 @@ void EX_GPIO_Init_pa4(uint8_t state)
 	}
 	else if(state == 1)
 	{
+		printf("[GPIO] Konfiguracja PA4  state=1\r\n");
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_4;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);	
 	}
 	else if(state == 2)
@@ -168,7 +172,7 @@ void EX_GPIO_Init_pa4(uint8_t state)
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_4;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);	
 	}
 	else if(state == 3)
@@ -176,7 +180,7 @@ void EX_GPIO_Init_pa4(uint8_t state)
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_4;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 	}
 	
@@ -193,6 +197,7 @@ void EX_GPIO_Init_pa0(uint8_t state)
 	
 	if(state == 0)
 	{
+		printf("[GPIO] Konfiguracja PA0  state=0\r\n");
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_0;
 		GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -201,10 +206,11 @@ void EX_GPIO_Init_pa0(uint8_t state)
 	}
 	else if(state == 1)
 	{
+		printf("[GPIO] Konfiguracja PA0  state=1\r\n");
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_0;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);	
 	}
 	else if(state == 2)
@@ -212,7 +218,7 @@ void EX_GPIO_Init_pa0(uint8_t state)
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_0;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);	
 	}
 	else if(state == 3)
@@ -220,7 +226,7 @@ void EX_GPIO_Init_pa0(uint8_t state)
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		GPIO_InitStruct.Pin = GPIO_PIN_0;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 	}
 	
