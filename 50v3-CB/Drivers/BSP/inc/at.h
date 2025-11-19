@@ -71,9 +71,9 @@
 #define QBAND    "+QBAND"
 #define IOTMOD    "+IOTMOD"
 #define DOWNTE     "+DOWNTE"
-#define AT_AUTORESTART      "+AUTORESTART"
 
 // FABE
+#define AT_AUTORESTART      "+AUTORESTART"
 #define TTHR       "+TTHR"
 /**********************************************/
 

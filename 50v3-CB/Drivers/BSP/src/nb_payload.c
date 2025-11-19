@@ -275,6 +275,33 @@ void pro_data(void)
 printf("[PAYLOAD] %s\r\n", buff);			
 }
 
+void pro_data_liveobjects(void)
+{
+    extern char     buff[2000];
+    extern uint16_t pro_data_num;
+
+    // 1) Budowanie JSON Dragino dla AKTUALNEGO CFGMOD
+    pro_data();  // po tym w buff jest np. {"IMEI":"...","gps":...} i ustawiony pro_data_num
+
+    // 2) Kopiowanie do lokalnego bufora – bedzie trescia pola "value"
+    char value_obj[1800] = {0};
+    size_t len = pro_data_num;
+    if (len >= sizeof(value_obj))
+        len = sizeof(value_obj) - 1;
+    memcpy(value_obj, buff, len);
+    value_obj[len] = '\0';
+
+    // 3) Budowanie DataMessage LO: {"value": <value_obj>}
+    //    (timestamp/streamId/model/tags/location sa opcjonalne wg LO, wiec mozemy je pominac)
+    memset(buff, 0, sizeof(buff));
+    int n = 0;
+    n += snprintf(buff + n, sizeof(buff) - n, "{");
+    n += snprintf(buff + n, sizeof(buff) - n, "\"value\":%s", value_obj);
+    n += snprintf(buff + n, sizeof(buff) - n, "}");
+
+    pro_data_num = (uint16_t)strlen(buff);
+}
+
 void mode_data(char *buff)
 {
 		printf("[PAYLOAD] START mode_data\r\n");

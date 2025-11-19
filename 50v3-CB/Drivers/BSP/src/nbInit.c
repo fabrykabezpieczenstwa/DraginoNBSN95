@@ -1967,7 +1967,10 @@ case _AT_MQTT_URI:
 						 else if(sys.platform==3)
 							*task=_AT_MQTT_PUB3; 						
 						 else if(sys.platform==5)
-							*task=_AT_MQTT_PUB5; 
+							*task=_AT_MQTT_PUB5;
+						 else if(sys.platform==6) // FABE – Live Objects
+              *task=_AT_MQTT_PUB5;		// uzywanie tej samej sciezki co platforma 5
+						 
 							user_main_printf("Successfully connected to the server");
 				      sprintf(record_log+strlen(record_log), "Successfully connected to the server\r\n");						 
 						break;
@@ -2314,7 +2317,7 @@ case _AT_UPLOAD_SUCC:
 			user_main_printf("Send complete");
 				sprintf(record_log+strlen(record_log), "Send complete\r\n");
 			last_tdc_temp =sensor.temSHT;																		//FABE
-			printf("[CLOCKLOG] przypisanie last_tdc_temp po wysylce w nbint\r\n");					//FABE
+			printf("[CLOCKLOG] przypisanie last_tdc_temp po wysylce w nbint\r\n");	//FABE
 			break;
 
 case _AT_UPLOAD_FAIL:

@@ -103,7 +103,6 @@ typedef struct
 	uint8_t			join_time;
 	uint8_t  autorestart_en;     // 0=OFF, 1=ON FABE
   uint32_t autorestart_hours;  // pr�g w godzinach FABE	
-	uint8_t			join_time;
 	uint16_t temp_thr;   // pr�g r�znicy temperatury (w dziesiatych �C); np. 10 = 1.0�C FABE
 }SYSTEM;
 

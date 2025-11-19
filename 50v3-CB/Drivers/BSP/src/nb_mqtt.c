@@ -15,6 +15,7 @@ extern NB_TaskStatus  nb_cmd_status;
 extern uint16_t pro_data_num;
 extern void pro_data(void);
 extern void pro_data_thingspeak(void);
+extern void pro_data_liveobjects(void);   //FABE
 /**
 	* @brief  Set MQTT configuration parameters
   * @param  Instruction parameter
@@ -565,6 +566,15 @@ NB_TaskStatus nb_MQTT_send_set(const char* param)
 	 ATSendStr  = buff;
 	 len_string = strlen(ATSendStr);			
 	}
+	else if(sys.platform==6)    // FABE – Live Objects DataMessage
+  {
+		pro_data_liveobjects();       // budowanie {"value": <json z pro_data>}
+
+		ATSendStr  = NULL;
+		buff[strlen(buff)] = 0x1A;    // zakonczenie payloadu CTRL+Z dla QMTPUB(EX)
+		ATSendStr  = buff;
+		len_string = strlen(ATSendStr);
+  }
   else if(sys.platform==2||sys.platform==3||sys.platform==5)
 	{
 	 pro_data();

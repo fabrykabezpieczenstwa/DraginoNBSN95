@@ -1897,7 +1897,8 @@ void config_Get(void)
 		   sprintf((char*)user.add, "%s", "mqtt.datacake.co,1883");				
 		}
 		else if(sys.platform==3)
-		sprintf((char*)user.add, "%s", "broker.hivemq.com,1883");			
+		sprintf((char*)user.add, "%s", "broker.hivemq.com,1883");
+		
 	}
 	
 		add = FLASH_USER_DNSCFG;
